@@ -22,7 +22,7 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
 2) Exemplos de documentos
 - Disponível no script de apoio ou na base de dados, em caso de ter executado o script, mas vou descrever o primeiro regostro das coleções:
   - usuario
-  ```json
+  ```
   {
     _id: ObjectId("000000000000000000000001"),
     nome: "Ana Silva",
@@ -41,7 +41,6 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
   - resenha
   - comentario
   - seguir
-
 #### 1.2 — Cardinalidade que muda a decisão
 #### 1.3 — N:N: de que lado guardar a referência?
 
