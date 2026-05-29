@@ -35,7 +35,8 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
       lendo: [],
       quero_ler: [ObjectId("100000000000000000000002")]
     }
-  }```
+  }
+  ```
 
   - livro
   - resenha
