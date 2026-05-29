@@ -22,7 +22,7 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
 2) Exemplos de documentos
 - Disponível no script de apoio ou na base de dados, em caso de ter executado o script, mas vou descrever o primeiro regostro das coleções:
   - usuario
-  ````
+  ```json
   {
     _id: ObjectId("000000000000000000000001"),
     nome: "Ana Silva",
@@ -36,7 +36,6 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
       quero_ler: [ObjectId("100000000000000000000002")]
     }
   }
-  ```
 
   - livro
   - resenha
