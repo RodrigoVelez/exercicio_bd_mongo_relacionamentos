@@ -2,29 +2,44 @@
 use rede_leitura;
 
 // limpar base
-db.usuarios.drop();
-db.livros.drop();
-db.resenhas.drop();
-db.comentarios.drop();
-db.relacoes_seguir.drop();
+db.usuario.drop();
+db.livro.drop();
+db.resenha.drop();
+db.comentario.drop();
+db.seguir.drop();
 
-// USUARIOS
-db.usuarios.insertOne({
-  _id: ObjectId("000000000000000000000001"),
-  nome: "Ana Silva",
-  email: "ana@email.com",
-  bio: "Apaixonada por fantasia",
-  foto: "https://img.com/ana.jpg",
-  data_cadastro: ISODate("2024-01-10"),
-  estantes: {
-    lido: [ObjectId("100000000000000000000001")],
-    lendo: [],
-    quero_ler: [ObjectId("100000000000000000000002")]
+// USUARIO
+db.usuario.insertMany([
+  {
+    _id: ObjectId("000000000000000000000001"),
+    nome: "Ana Silva",
+    email: "ana@email.com",
+    bio: "Apaixonada por fantasia",
+    foto: "https://img.com/ana.jpg",
+    data_cadastro: ISODate("2024-01-10"),
+    estante: {
+      lido: [ObjectId("100000000000000000000001")],
+      lendo: [],
+      quero_ler: [ObjectId("100000000000000000000002")]
+    }
+  },
+  {
+    _id: ObjectId("000000000000000000000002"),
+    nome: "José Barreto",
+    email: "jose@gmail.com",
+    bio: "Estudante",
+    foto: "https://img.com/jose.jpg",
+    data_cadastro: ISODate("2022-01-10"),
+    estante: {
+      lido: [ObjectId("100000000000000000000004"), ObjectId("100000000000000000000007"), ObjectId("100000000000000000000008")],
+      lendo: [ObjectId("100000000000000000000001")],
+      quero_ler: [ObjectId("100000000000000000000011"), ObjectId("100000000000000000000012")]
+    }
   }
-});
+]);
 
 // LIVROS
-db.livros.insertMany([
+db.livro.insertMany([
   {
     _id: ObjectId("100000000000000000000001"),
     titulo: "O Hobbit",
@@ -148,7 +163,7 @@ db.livros.insertMany([
 ]);
 
 // RESENHAS
-db.resenhas.insertOne({
+db.resenha.insertOne({
   _id: ObjectId("200000000000000000000001"),
   usuario_id: ObjectId("000000000000000000000001"),
   livro_id: ObjectId("100000000000000000000001"),
@@ -159,18 +174,18 @@ db.resenhas.insertOne({
 });
 
 // COMENTARIOS
-db.comentarios.insertOne({
+db.comentario.insertOne({
   _id: ObjectId("300000000000000000000001"),
   resenha_id: ObjectId("200000000000000000000001"),
-  usuario_id: ObjectId("000000000000000000000001"),
+  usuario_id: ObjectId("000000000000000000000002"),
   texto: "Concordo totalmente!",
   data: ISODate("2025-01-02")
 });
 
 // RELACOES SEGUIR
-db.relacoes_seguir.insertOne({
+db.seguir.insertOne({
   _id: ObjectId("400000000000000000000001"),
-  seguidor_id: ObjectId("000000000000000000000001"),
-  seguido_id: ObjectId("000000000000000000000002"),
+  usuario_id: ObjectId("000000000000000000000001"),
+  seguidor_id: ObjectId("000000000000000000000002"),
   data: ISODate("2025-01-05")
 });
