@@ -13,11 +13,11 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
 ### Parte 1 — Modelagem de relacionamentos
 #### 1.1 — Decisões embed × referência
 1) Lista de coleções
-- usuario
-- livro
-- resenha
-- comentario
-- seguir
+  - usuario
+  - livro
+  - resenha
+  - comentario
+  - seguir
 
 2) Exemplos de documentos
 - Disponível no script de apoio ou na base de dados, em caso de ter executado o script, mas vou descrever o primeiro regostro das coleções:
@@ -39,9 +39,49 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
   ```
 
   - livro
+  ```js
+  {
+    _id: ObjectId("100000000000000000000001"),
+    titulo: "O Hobbit",
+    autores: ["J.R.R. Tolkien"],
+    editora: "HarperCollins",
+    ano: 1937,
+    generos: ["Fantasia"],
+    isbn: "9780000000001",
+    sinopse: "Um hobbit sai em uma aventura inesperada."
+  }
+  ```
   - resenha
+  ```js
+  {
+    _id: ObjectId("200000000000000000000001"),
+    usuario_id: ObjectId("000000000000000000000001"),
+    livro_id: ObjectId("100000000000000000000001"),
+    nota: 5,
+    texto: "Livro incrível!",
+    data: ISODate("2025-01-01"),
+    curtidas: 10
+  }
+  ```
   - comentario
+  ```js
+  {
+    _id: ObjectId("300000000000000000000001"),
+    resenha_id: ObjectId("200000000000000000000001"),
+    usuario_id: ObjectId("000000000000000000000002"),
+    texto: "Concordo totalmente!",
+    data: ISODate("2025-01-02")
+  }
+  ```
   - seguir
+  ```js
+  {
+    _id: ObjectId("400000000000000000000001"),
+    usuario_id: ObjectId("000000000000000000000001"),
+    seguidor_id: ObjectId("000000000000000000000002"),
+    data: ISODate("2025-01-05")
+  }
+  ```
 #### 1.2 — Cardinalidade que muda a decisão
 #### 1.3 — N:N: de que lado guardar a referência?
 
