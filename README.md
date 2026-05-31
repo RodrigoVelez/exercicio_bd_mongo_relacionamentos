@@ -156,6 +156,21 @@ Campos retornados:
 
 ### Parte 3 — Schema Design Patterns
 #### 3.1 — Extended Reference
+```js
+{
+  "_id": ObjectId("200000000000000000000001"),
+  "usuario_id": ObjectId("000000000000000000000001"),
+  "usuario_nome": "Ana Silva",
+  "livro_id": ObjectId("100000000000000000000001"),
+  "livro_titulo": "O Hobbit",
+  "nota": 5,
+  "texto": "Livro incrível!",
+  "data": ISODate("2025-01-01"),
+  "curtidas": 10
+}
+
+**Justificativa:** Foram duplicados os campos _usuario_nome_ e _livro_titulo_, pois são exibidos em praticamente todas as leituras de resenhas e são relativamente estáveis. Isso evita o uso frequente de $lookup, melhorando a performance de leitura.
+
 #### 3.2 — Subset
 #### 3.3 — Computed
 #### 3.4 — Escolha livre: Bucket, Outlier ou Versioning
