@@ -170,8 +170,113 @@ Campos retornados:
 }
 ```
 
-**Justificativa:** Foram duplicados os campos _usuario_nome_ e _livro_titulo_, pois são exibidos em praticamente todas as leituras de resenhas e são relativamente estáveis. Isso evita o uso frequente de $lookup, melhorando a performance de leitura.
+**Justificativa:** Foram duplicados os campos **_usuario_nome_** e **_livro_titulo_**, pois são exibidos em praticamente todas as leituras de resenhas e são relativamente estáveis. Isso evita o uso frequente de **$lookup**, melhorando a performance de leitura.
 
-#### 3.2 — Subset
+#### 3.2 — Subset Pattern
+```js
+{
+  "_id": ObjectId("100000000000000000000001"),
+  "titulo": "O Hobbit",
+  "reviews_top": [
+    {
+      "usuario_nome": "Ana Silva",
+      "nota": 5,
+      "texto": "Excelente!"
+    },
+    {
+      "usuario_nome": "José Barreto",
+      "nota": 4,
+      "texto": "Muito bom"
+    },
+    {
+      "usuario_nome": "Maria Souza",
+      "nota": 5,
+      "texto": "Favorito!"
+    }
+  ],
+  "reviews_count": 1200
+}
+```
+
+**Justificativa:** Apenas as 3 resenhas mais recentes ou as mais relevantes são embarcadas no documento do livro, garantindo leitura rápida no acesso principal. O restante permanece na coleção resenha, evitando crescimento excessivo do documento. Uma opção de "Carregar mais resenhas" realiza uma consulta paginada na coleção resenha filtrando por livro_id.
+
 #### 3.3 — Computed
+**Documento (livro)**<br>
+```js
+{
+  "_id": ObjectId("100000000000000000000001"),
+  "titulo": "O Hobbit",
+  "nota_media": 4.5,
+  "soma_notas": 540,
+  "total_resenhas": 120
+}
+```
+
+**Update a cada nova resenha**<br>
+```js
+// PASSO 1: incrementa contadores
+db.livro.updateOne(
+  { _id: ObjectId("100000000000000000000001") },
+  {
+    $inc: {
+      total_resenhas: 1,
+      soma_notas: 5
+    }
+  }
+);
+
+// PASSO 2: recalcula a média e salva
+db.livro.updateOne(
+  { _id: ObjectId("100000000000000000000001") },
+  [
+    {
+      $set: {
+        nota_media: { $divide: ["$soma_notas", "$total_resenhas"] }
+      }
+    }
+  ]
+);
+```
+
+**Justificativa:** O padrão Computed evita cálculos custosos com $aggregate a cada leitura, mantendo valores atualizados com um simpes write nos dados. Isso torna a leitura rápida, ideal para telas muito acessadas como listagem de livros.
+
 #### 3.4 — Escolha livre: Bucket, Outlier ou Versioning
+**Cenário: usuário com milhões de seguidores**<br>
+**Documento (usuário comum)**<br>
+```js
+{
+  "_id": ObjectId("000000000000000000000001"),
+  "nome": "Ana Silva",
+  "seguidores": [
+    ObjectId("..."),
+    ObjectId("...")
+  ]
+}
+```
+
+**Documento (usuário outlier)**<br>
+```js
+{
+  "_id": ObjectId("000000000000000000000999"),
+  "nome": "Influencer Literário",
+  "seguidores": [
+    ObjectId("u1"),
+    ObjectId("u2"),
+    ObjectId("u3")
+  ],
+  "seguidores_count": 2000000,
+  "has_seguidores_extras": true
+}
+```
+
+**Coleção separada**<br>
+```js
+{
+  "_id": ObjectId(),
+  "usuario_id": ObjectId("000000000000000000000999"),
+  "seguidor_id": ObjectId("u999999"),
+  "data": ISODate("2025-01-01")
+}
+```
+
+**Justificativa:** Usuários com milhões de seguidores representam exceções (outliers) e não devem seguir o mesmo modelo dos usuários comuns. Embutir todos os seguidores causaria crescimento excessivo do documento. O Outlier Pattern, neste caso, mantém o sistema eficiente para a maioria e escalável para os outrliers.
