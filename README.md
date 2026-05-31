@@ -168,6 +168,7 @@ Campos retornados:
   "data": ISODate("2025-01-01"),
   "curtidas": 10
 }
+```
 
 **Justificativa:** Foram duplicados os campos _usuario_nome_ e _livro_titulo_, pois são exibidos em praticamente todas as leituras de resenhas e são relativamente estáveis. Isso evita o uso frequente de $lookup, melhorando a performance de leitura.
 
