@@ -7,7 +7,7 @@ Ter o docker de exemplo da aula 08 criado, pois este database usa este docker
 docker exec -i aula08-mongo mongosh < scripts/script_execucao.js
 
 ## Validar se os dados existem (Deve retornar 12)
-docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura").livros.countDocuments()'
+docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura").livro.countDocuments()'
 
 ## Entregas
 ### Parte 1 — Modelagem de relacionamentos
