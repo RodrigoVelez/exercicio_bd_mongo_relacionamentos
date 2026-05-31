@@ -115,8 +115,9 @@ Se a aplicação tiver vínculo apenas com livros de pouco conhecidos ou pouco c
 2. Cenário de um outlier ou best-seller (centenas de milhares de resenhas):<br>
 Se tratarmos grandes sucessos, fazer embadding das resenhas é inviável. O array incharia até estourar o limite de 16MB do documento no MongoDB, causando problemas de persistêncoa de dados além de fazer a leitura do documento muito lenta e pesada para trafegar na rede.
 
-**O Schema Design Pattern que resolve esse caso**
+**O Schema Design Pattern que resolve esse caso**<br>
 Para suportar tanto livros com poucas resenhas quanto grandes sucessos com milhares de resenmhas, a melhor abordagem é utilizar o Subset Pattern.<br>
+
 Quando um usuário abre a página do livro, o MongoDB retorna 1 único documento leve, que já inclui as 5 principais resenhas para exibição imediata na tela, garantindo performance. Se o usuário quiser ler mais resenhas, ele clica em "Ver próximas", e a aplicação faz uma segunda query separada e paginada na coleção de resenhas.
 
 #### 1.3 — N:N: de que lado guardar a referência?
