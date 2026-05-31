@@ -121,6 +121,11 @@ Para suportar tanto livros com poucas resenhas quanto grandes sucessos com milha
 Quando um usuário abre a página do livro, o MongoDB retorna 1 único documento leve, que já inclui as 5 principais resenhas para exibição imediata na tela, garantindo performance. Se o usuário quiser ler mais resenhas, ele clica em "Ver próximas", e a aplicação faz uma segunda query separada e paginada na coleção de resenhas.
 
 #### 1.3 — N:N: de que lado guardar a referência?
+A melhor abordagem para o relacionamento Usuário ↔ seguir é utilizar uma coleção extra de ligação (collection: seguir), em vez de armazenar arrays dentro dos documentos de usuário.
+
+Essa decisão se baseia principalmente pela possibilidade de existir usuários com milhões de seguidores (outliers). Embutir arrays, seja do lado seguindo ou do lado seguidor faria o documento crescer sem limites e causaria perdsa de performance e até atingir o limite de 16MB do documento.
+
+Paralelo a isso, consultas como “quem eu sigo” e “quem me segue” podem ser resolvidas eficientemente com índices na collection **_seguir_**, sem precisar duplicar dados.
 
 ### Parte 2 — $lookup e agregação
 #### 2.1 — Enriquecer o dataset
