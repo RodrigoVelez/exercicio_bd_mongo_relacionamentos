@@ -129,7 +129,30 @@ Paralelo a isso, consultas como “quem eu sigo” e “quem me segue” podem s
 
 ### Parte 2 — $lookup e agregação
 #### 2.1 — Enriquecer o dataset
+Foram inseridos 4 novos livros na coleção livro, respeitando os relacionamentos com editora e autor por meio de referências (_id).
+
+Critérios atendidos:
+* Um livro com múltiplos autores (array de referências)
+* Dois livros associados à mesma editora, demonstrando reutilização de referência
+
 #### 2.2 — $lookup básico
+**(a) Livros com dados da editora**<br>
+Foi utilizado $lookup para realizar um left join entre livro e editora, seguido de $unwind para transformar o array resultante em objeto JSON, e $project para formatar a saída.
+
+Campos retornados:
+* title
+* editora (nome)
+* cidade
+
+Essa abordagem segue o padrão mostrado em aula, onde $lookup sempre retorna um array, mesmo 
+em relações 1:1.
+
+**(b) Livros com autores (N:N)**
+Foi realizado um segundo $lookup, desta vez com a coleção autor. Como o campo autores já é um array de _id, o MongoDB retorna todos os autores relacionados.
+
+Campos retornados:
+* title
+* lista de nomes dos autores
 
 ### Parte 3 — Schema Design Patterns
 #### 3.1 — Extended Reference
