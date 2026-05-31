@@ -83,7 +83,7 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
   }
   ```
 
-3. Decisões de modelagem (embed vs referência)
+3. Decisões de modelagem (embed vs referência)<br>
 **(a) Usuário ↔ perfil/foto/configurações**
 * Decisão: EMBEDDING
 * Justificativa: Por se trata de uma relação é 1:1 e os dados são sempre acessados juntos. Embutir evita necessidade de joins e melhora a performance de leitura. O tamanho do documento é pequeno, logo não há risco com relação ao limite de 16MB do documento.
