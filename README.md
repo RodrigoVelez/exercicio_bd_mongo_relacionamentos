@@ -12,14 +12,14 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
 ## Entregas
 ### Parte 1 — Modelagem de relacionamentos
 #### 1.1 — Decisões embed × referência
-1) Lista de coleções
+1. Lista de coleções
   - usuario
   - livro
   - resenha
   - comentario
   - seguir
 
-2) Exemplos de documentos
+2. Exemplos de documentos
 - Disponível no script de apoio ou na base de dados, em caso de ter executado o script, mas vou descrever o primeiro regostro das coleções:
   - usuario
   ```js
@@ -82,6 +82,28 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
     data: ISODate("2025-01-05")
   }
   ```
+
+3. Decisões de modelagem (embed vs referência)
+*(a) Usuário ↔ perfil/foto/configurações*
+- Decisão: EMBEDDING
+- Justificativa: Por se trata de uma relação é 1:1 e os dados são sempre acessados juntos. Embutir evita necessidade de joins e melhora a performance de leitura. O tamanho do documento é pequeno, logo não há risco com relação ao limite de 16MB do documento.
+
+(b) Resenha ↔ comentários
+- Decisão: REFERÊNCIA
+Justificativa: Apesar de poder começar como 1:poucos, comentários podem crescer sem limite em resenhas populares. Embutir poderia causar crescimento descontrolado do documento. Além disso, comentários são frequentemente acessados separadamente (paginação), o que favorece coleção própria.
+
+(c) Livro ↔ resenhas
+Decisão: REFERÊNCIA
+Justificativa: Como a cardinalidade é de 1:muitos, ela pode crescer muito. Embutir resenhas dentro do livro poderia violar o limite de tamanho e prejudicaria a performance de escrita. Separar permite melhor performance, neste caso e poderia escalar mais facilmente.
+
+(d) Usuário ↔ livros nas estantes
+Decisão: EMBEDDING (com referência de IDs)
+Justificativa: A estante pode ser acessada junto com o usuário, o que favorece embedding. São armazenados apenas os ObjectId dos livros, mantendo o documento leve e facilitando futuras manutenções. Apesar de ser N:N, o crescimento é controlado .
+
+(e) Usuário ↔ usuários (seguir)
+Decisão: REFERÊNCIA (coleção própria)
+Justificativa: Trata-se de um relacionamento N:N. O número de conexões pode crescer muito (usuários com milhares de seguidores). Embutir isso no documento de usuário causaria crescimento descontrolado, perda de performance e possibilidade de extrapolar a capacidade de armazenamento do documento. A coleção separada permite escalabilidade e consultas eficientes.
+
 #### 1.2 — Cardinalidade que muda a decisão
 #### 1.3 — N:N: de que lado guardar a referência?
 
