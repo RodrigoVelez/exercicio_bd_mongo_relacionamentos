@@ -147,7 +147,7 @@ Campos retornados:
 Essa abordagem segue o padrão mostrado em aula, onde $lookup sempre retorna um array, mesmo 
 em relações 1:1.
 
-**(b) Livros com autores (N:N)**
+**(b) Livros com autores (N:N)**<br>
 Foi realizado um segundo $lookup, desta vez com a coleção autor. Como o campo autores já é um array de _id, o MongoDB retorna todos os autores relacionados.
 
 Campos retornados:
