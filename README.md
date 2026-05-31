@@ -106,6 +106,19 @@ docker exec aula08-mongo mongosh --quiet --eval \ 'db.getSiblingDB("rede_leitura
 * Justificativa: Trata-se de um relacionamento N:N. O número de conexões pode crescer muito (usuários com milhares de seguidores). Embutir isso no documento de usuário causaria crescimento descontrolado, perda de performance e possibilidade de extrapolar a capacidade de armazenamento do documento. A coleção separada permite escalabilidade e consultas eficientes.
 
 #### 1.2 — Cardinalidade que muda a decisão
+A decisão entre embedding e referência pode mudar muito conforme o volume de dados cresce. Isso se dá por causa do limite rígido de armazenamento por documento no formato BSON e a degradação de performance em arrays muito grandes com os dados aninhados.
+
+Para o relacionamento (c) Livro ↔ resenhas:<br>
+1. Cenário de um livro comum (dezenas de resenhas):<br>
+Se a aplicação tiver vínculo apenas com livros de pouco conhecidos ou pouco comentados, a estratégia ideal seria o Embedding. Isso se dá porque ao acessar a página do livro, já traríamos todas as resenhas em uma única solicitação (Request) ao banco de dados, sem necessidade de $lookup ou múltiplas consultas.
+
+2. Cenário de um outlier ou best-seller (centenas de milhares de resenhas):<br>
+Se tratarmos grandes sucessos, fazer embadding das resenhas é inviável. O array incharia até estourar o limite de 16MB do documento no MongoDB, causando problemas de persistêncoa de dados além de fazer a leitura do documento muito lenta e pesada para trafegar na rede.
+
+**O Schema Design Pattern que resolve esse caso**
+Para suportar tanto livros com poucas resenhas quanto grandes sucessos com milhares de resenmhas, a melhor abordagem é utilizar o Subset Pattern.<br>
+Quando um usuário abre a página do livro, o MongoDB retorna 1 único documento leve, que já inclui as 5 principais resenhas para exibição imediata na tela, garantindo performance. Se o usuário quiser ler mais resenhas, ele clica em "Ver próximas", e a aplicação faz uma segunda query separada e paginada na coleção de resenhas.
+
 #### 1.3 — N:N: de que lado guardar a referência?
 
 ### Parte 2 — $lookup e agregação
